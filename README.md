@@ -1,0 +1,2 @@
+# EIP-884 Implementation for Security Tokens Compliant with the Delaware General Corporations Law 
+### NOTE: Based on the standard definition by Dave Sag https://github.com/ethereum/EIPs/blob/master/EIPS/eip-884.md
