@@ -10,6 +10,8 @@ contract StockToken is BasicToken {
     address public owner;
     mapping(address => bool) public authorizedShareholders;
 
+    event AddressAddedToWhitelist(address indexed AuthorizedBy, address indexed AddressAdded);
+
     constructor (string _symbol,string _name, uint _supply, string hash) public  {
         symbol = _symbol;
         name = _name;
@@ -36,5 +38,6 @@ contract StockToken is BasicToken {
     function addAddressToWhitelist (address _address) onlyOwner public returns (bool) { // add an address to the authorizedShareholders mapping
         require(!isWhitelisted(_address));
         authorizedShareholders[_address] = true;
+        emit AddressAddedToWhitelist(msg.sender, _address);
     }
 }

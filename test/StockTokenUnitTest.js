@@ -2,6 +2,7 @@ const StockToken = artifacts.require('./StockToken.sol');
 
 contract('StockToken', async(accounts) => {
     let instance
+    const OWNER = accounts[0];
     
     beforeEach('Create a new contract instance', async () => {
         instance = await StockToken.new('ROKK','Rokk3r Crowdbuild',1000000, '022841754bd3d55d221fdb46a178cee5e223937eebaccc56efc415e7e63823ca');
@@ -41,7 +42,7 @@ contract('StockToken', async(accounts) => {
         }
     })
 
-    it("Only owner should be able to add to the whitelist, non owner should throw if attemp to add to whitelist", async () => {
+    it("Only owner should be able to add to the whitelist, non owner should throw if attempt to add to whitelist", async () => {
         let account = accounts[1]; // non owner account
         const isWhitelistedBefore = await instance.isWhitelisted(account); // Check if address is in whitelist
         assert.isFalse(isWhitelistedBefore, "The address was already whitelisted."); // The address should not be be whitlisted
@@ -61,5 +62,14 @@ contract('StockToken', async(accounts) => {
         const totalSupply = await instance.totalSupply(); // get total supply of coins
         assert.isTrue(isWhitelisted,'The address is not whitelisted'); // address should be whitlisted as it owns the contract
         assert.isTrue(balance.eq(totalSupply), "The owner of the contract doesn't own all tokens"); //Owner's balance should be equal to total supply
+    })
+    
+    it('should emit event AddressAddedToWhitelist with correct parameters', async() => {
+        const account = accounts[1];
+        const tx = await instance.addAddressToWhitelist(account,{from:OWNER}) // get TX receipt to parse logs and look for events
+        const event = tx.logs[0];
+        assert.equal(event.event, "AddressAddedToWhitelist", "AddressAddedToWhitelist was not the sent event"); // check if the right event was fired
+        assert.equal(event.args.AuthorizedBy, OWNER, "The function was called from owner but log is not")
+        assert.equal(event.args.AddressAdded, account, "The account added doesn't match")
     })
 })
