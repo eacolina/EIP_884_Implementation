@@ -1,13 +1,16 @@
 pragma solidity ^0.4.24;
 
-import "openzeppelin-solidity/contracts/token/ERC20/BasicToken.sol";
+// import "./ERC20NoTransfer.sol";
+import "./ERC20NoTransfer.sol";
+import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
-contract StockToken is BasicToken {
+contract StockToken is ERC20NoTransfer {
 
     string public symbol;
     string public name;
-    string public by_LawsHash;
+    string public byLawsHash;
     address public owner;
+    uint public decimals;
     mapping(address => bool) public authorizedShareholders;
 
     event AddressAddedToWhitelist(address indexed AuthorizedBy, address indexed AddressAdded);
@@ -16,13 +19,13 @@ contract StockToken is BasicToken {
         symbol = _symbol;
         name = _name;
         totalSupply_ = _supply;
-        by_LawsHash = hash;
+        byLawsHash = hash;
         owner = msg.sender;
         addAddressToWhitelist(msg.sender);
         balances[msg.sender] = _supply;
     }
 
-    modifier onlyIfWhitlisted (address _address) { // modifier to restrict access only to whitelisted accounts
+    modifier onlyIfWhitelisted (address _address) { // modifier to restrict access only to whitelisted accounts
         require(isWhitelisted(_address));
         _;
     }
@@ -39,5 +42,9 @@ contract StockToken is BasicToken {
         require(!isWhitelisted(_address));
         authorizedShareholders[_address] = true;
         emit AddressAddedToWhitelist(msg.sender, _address);
+    }
+
+    function transfer(address _to, uint256 _value) onlyIfWhitelisted(_to) public returns (bool){
+        return transferAfterWhitelist(_to, _value);
     }
 }
