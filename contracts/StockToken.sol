@@ -1,9 +1,11 @@
 pragma solidity ^0.4.24;
 
 // import "./ERC20NoTransfer.sol";
+
 import "./ERC20NoTransfer.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "./Whitelistable.sol";
+
 contract StockToken is ERC20NoTransfer {
 
     string public symbol;
