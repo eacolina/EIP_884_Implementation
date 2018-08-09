@@ -5,8 +5,10 @@ pragma solidity ^0.4.24;
 import "./ERC20NoTransfer.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "./IdentityRegistry.sol";
+import "openzeppelin-solidity/contracts/token/ERC20/BasicToken.sol";
 
-contract StockToken is ERC20NoTransfer {
+
+contract StockToken is BasicToken {
 
     string public symbol;
     string public name;
@@ -32,7 +34,7 @@ contract StockToken is ERC20NoTransfer {
     }
 
     function transfer(address _to, uint256 _value) onlyIfWhitelisted(_to) public returns (bool){
-        return transferAfterWhitelist(_to, _value);
+        super.transfer(_to, _value);
     }
 
     function togglePrivateCompany() public {
