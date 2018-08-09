@@ -4,6 +4,7 @@ IMPORTANT NOTE: These tests do not cover the basic functionality of the ERC20 st
 
 const StockToken = artifacts.require('./StockToken.sol');
 const Whitlistable = artifacts.require('./Whitelistable.sol');
+const IdentityRegistry = artifacts.require('./IdentityRegistry');
 
 contract('StockToken', async(accounts) => {
     let instance
@@ -12,8 +13,8 @@ contract('StockToken', async(accounts) => {
     const whitelistedAccount = accounts[2];
     
     beforeEach('Create a new contract instance', async () => {
-        platformWhitelist = await Whitlistable.new();
-        await platformWhitelist.addAddressToWhitelist(accounts[2]); // in case a whitelisted account is needed
+        platformWhitelist = await IdentityRegistry.new();
+        await platformWhitelist.addIdentity(accounts[2], "Account 2"); // in case a whitelisted account is needed
         instance = await StockToken.new('ROKK','Rokk3r Crowdbuild',1000000, '022841754bd3d55d221fdb46a178cee5e223937eebaccc56efc415e7e63823ca',platformWhitelist.address);
     })
 
@@ -35,7 +36,7 @@ contract('StockToken', async(accounts) => {
             assert.equal(platformWhitelistAddress, platformWhitelist.address, "The whitelist pointer is incorrect");
         })
 
-        it('should create a StockToken and create whitelisted address for owner and all tokens to it', async() => {
+        it('should create a StockToken and whitelist the owner\'s address', async() => {
             let account = accounts[0];
             const balance = await instance.balanceOf(account); // get balance
             const totalSupply = await instance.totalSupply(); // get total supply of coins
@@ -44,21 +45,31 @@ contract('StockToken', async(accounts) => {
     })
     
     describe('transfer', () => {
-        it('should allow for transfer of tokens to a whitelisted address', async () => {
+        it('should allow for transfer of tokens to a platform whitelisted address when isPrivateCompany is false', async () => {
             const destAccount = whitelistedAccount; // address to which the token will be sent
             const initDestBalance = await instance.balanceOf(destAccount);
             const initOrigBalance = await instance.balanceOf(OWNER);
+            await instance.togglePrivateCompany(); // isPrivate needs to be false for this test
             await instance.transfer(destAccount, 100); // transfer 100 tokens to dest account
             const postTransferBalance = await instance.balanceOf(destAccount);
             assert.isTrue(postTransferBalance.eq(100),"Balances dont add up")
         })
     
-        it('should throw when recipient is not whitelisted', async () => {
+        it('should throw when recipient is not whitelisted in IdentityRegistry', async () => {
             const destAccount = accounts[1]; // address to which the token will be sent
             try {
                 await instance.transfer(destAccount, 100);
                 assert.fail()
             } catch (err) {
+                assert.isOk(/revert/.test(err.message), "There was no REVERT error thrown")
+            }
+        })
+        it('if isPrivateComapny, should throw when recipient is whitelisted in IdentityRegistry but not in the authorized mapping(token whitelist) ', async () => {
+            const destAccount = accounts[2];
+            try{
+                await instance.transfer(destAccount, 100);
+                assert.fail();
+            } catch(err) {
                 assert.isOk(/revert/.test(err.message), "There was no REVERT error thrown")
             }
         })

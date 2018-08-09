@@ -2,13 +2,13 @@ pragma solidity ^0.4.24;
 
 // import "./ERC20NoTransfer.sol";
 
-import "./ERC20NoTransfer.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "./IdentityRegistry.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/BasicToken.sol";
+import "./Whitelistable.sol";
 
 
-contract StockToken is BasicToken {
+contract StockToken is BasicToken, Whitelistable {
 
     string public symbol;
     string public name;
@@ -18,7 +18,7 @@ contract StockToken is BasicToken {
     bool public isPrivateCompany = true;
     IdentityRegistry public platformWhitelist;
     
-    constructor(string _symbol, string _name, uint _supply, string hash, address _registry) public  {
+    constructor(string _symbol, string _name, uint _supply, string hash, address _registry) Whitelistable() public  {
         symbol = _symbol;
         name = _name;
         totalSupply_ = _supply;
@@ -30,6 +30,13 @@ contract StockToken is BasicToken {
 
     modifier onlyIfWhitelisted(address _address) { // modifier to restrict access only to whitelisted accounts
         require(platformWhitelist.isWhitelisted(_address));
+        if(isPrivateCompany){
+            require(isWhitelisted(_address), "Address not in private shareholders whitelist");
+        }
+        _;
+    }
+    modifier onlyOwner(){
+        require(msg.sender == owner);
         _;
     }
 
@@ -37,7 +44,7 @@ contract StockToken is BasicToken {
         super.transfer(_to, _value);
     }
 
-    function togglePrivateCompany() public {
+    function togglePrivateCompany() onlyOwner() public {
         isPrivateCompany = !isPrivateCompany;
     }
     
