@@ -17,6 +17,8 @@ contract StockToken is BasicToken, Whitelistable {
     uint public decimals;
     bool public isPrivateCompany = true;
     IdentityRegistry public platformWhitelist;
+
+    event ChangedCompanyStatus(address authorizedBy, bool newStatus);
     
     constructor(string _symbol, string _name, uint _supply, string hash, address _registry) Whitelistable() public  {
         symbol = _symbol;
@@ -46,6 +48,7 @@ contract StockToken is BasicToken, Whitelistable {
 
     function togglePrivateCompany() onlyOwner() public {
         isPrivateCompany = !isPrivateCompany;
+        emit ChangedCompanyStatus(msg.sender, isPrivateCompany);
     }
     
 }

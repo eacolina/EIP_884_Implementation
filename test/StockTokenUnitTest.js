@@ -81,5 +81,13 @@ contract('StockToken', async(accounts) => {
             await instance.togglePrivateCompany()
             assert.isFalse(await instance.isPrivateCompany(), "Company is still private");
         })
+
+        it('should emit an changedCompanyStatus event', async() => {
+            const tx = await instance.togglePrivateCompany();
+            const event = tx.logs[0];
+            assert.equal(event.event, "ChangedCompanyStatus", "changedCompanyStatus was not the sent event"); // check if the right event was fired
+            assert.equal(event.args.authorizedBy, OWNER, "The function was called from owner but log is not")
+            assert.isFalse(event.args.newStatus, "The account removed doesn't match") // testing for false because isPrivateCompany is true by default
+        })
     })
 })
