@@ -20,6 +20,7 @@ contract('Whitelistable', async (accounts) =>{
 
         it('should throw if address is whitelisted already', async () =>{
             let account = accounts[0]; // account that should be whitelisted already
+            await instance.addAddressToWhitelist(account);
             const isWhitelistedBefore = await instance.isWhitelisted(account); // Check if address is in whitelist
             assert.isTrue(isWhitelistedBefore, "The address was not whitelisted"); // This address should be whitelisted already
             try {

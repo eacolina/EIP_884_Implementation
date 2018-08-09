@@ -14,7 +14,6 @@ contract Whitelistable {
 
     constructor() public{
         owner = msg.sender;
-        addAddressToWhitelist(owner);
     }
     
     function isWhitelisted(address _address) public view returns(bool){ // function to check if address is whitelisted
