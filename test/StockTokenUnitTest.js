@@ -16,6 +16,7 @@ contract('StockToken', async(accounts) => {
         await platformWhitelist.addAddressToWhitelist(accounts[2]); // in case a whitelisted account is needed
         instance = await StockToken.new('ROKK','Rokk3r Crowdbuild',1000000, '022841754bd3d55d221fdb46a178cee5e223937eebaccc56efc415e7e63823ca',platformWhitelist.address);
     })
+
     describe('constructor', () => {
         it('should create a StockToken with correct parameters and owner', async() => {
             let name = await instance.name(); // get name of token
@@ -64,7 +65,7 @@ contract('StockToken', async(accounts) => {
     })
 
     describe('togglePrivateCompany', async () => {
-        it('should change the isPrivateCompany to its oposite value', async () => {
+        it('should change the isPrivateCompany to its opposite value', async () => {
             assert.isTrue(await instance.isPrivateCompany(), 'The company is public');
             await instance.togglePrivateCompany()
             assert.isFalse(await instance.isPrivateCompany(), "Company is still private");

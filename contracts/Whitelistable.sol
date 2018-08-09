@@ -1,7 +1,7 @@
 pragma solidity ^0.4.24;
 
 contract Whitelistable {
-    mapping (address => bool) public authorized;
+    mapping (address => bool) public whitelist;
     address public owner;
     
     event AddressAddedToWhitelist(address indexed AuthorizedBy, address indexed AddressAdded);
@@ -14,22 +14,21 @@ contract Whitelistable {
 
     constructor() public{
         owner = msg.sender;
-        addAddressToWhitelist(owner);
     }
     
     function isWhitelisted(address _address) public view returns(bool){ // function to check if address is whitelisted
-        return authorized[_address];
+        return whitelist[_address];
     }
 
     function addAddressToWhitelist(address _address) onlyOwner public{ // add an address to the authorized mapping
         require(!isWhitelisted(_address));
-        authorized[_address] = true;
+        whitelist[_address] = true;
         emit AddressAddedToWhitelist(msg.sender, _address);
     }
 
     function removeAddressFromWhitelist(address _address) onlyOwner public{
         require(isWhitelisted(_address)); // check if address is whitelisted
-        authorized[_address] = false;
+        whitelist[_address] = false;
         emit AddressRemovedFromWhitelist(msg.sender, _address);
     }
 }
