@@ -3,7 +3,7 @@ pragma solidity ^0.4.24;
 import "./Whitelistable.sol";
 
 contract IdentityRegistry is Whitelistable {
-    mapping(address => string) public identityMap;
+    mapping(address => string) public identityMap; // maps an address to an idenity hash
 
     event IdentityAdded(address indexed addressAdded, string identityHash, address indexed authorizedBy);
     event IdentityUpdated(address indexed updatedAddress, string previousHash, string newHash, address indexed authorizedBy);
