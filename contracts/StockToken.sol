@@ -2,7 +2,6 @@ pragma solidity ^0.4.24;
 
 // import "./ERC20NoTransfer.sol";
 
-import "./ERC20NoTransfer.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 import "./IdentityRegistry.sol";
 import "openzeppelin-solidity/contracts/token/ERC20/BasicToken.sol";
