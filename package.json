@@ -19,5 +19,9 @@
   "bugs": {
     "url": "https://github.com/eacolina/EIP_884_Implementation/issues"
   },
-  "homepage": "https://github.com/eacolina/EIP_884_Implementation#readme"
+  "homepage": "https://github.com/eacolina/EIP_884_Implementation#readme",
+  "dependencies": {
+    "sloc": "^0.2.0",
+    "truffle-hdwallet-provider": "0.0.6"
+  }
 }
